@@ -6,15 +6,16 @@ import matplotlib.gridspec as gridspec
 from matplotlib.patches import Polygon
 from matplotlib.widgets import Slider, Button
 
-from geometry import GeometryHandler
 from solvers import BarrowmanSolver
+from geometry import GeometryHandler, CSVParser
 
 
 def animate_realistic_aerodynamics(csv_file=None, X_com=0.7):
     ######GEOM SETUP#######
     if csv_file and os.path.exists(csv_file):
         print(f"Loading custom geometry from: {csv_file}")
-        geom = GeometryHandler.from_csv(csv_file, x_com=X_com)
+        csv_parser = CSVParser()
+        geom = GeometryHandler.from_file(csv_file, parser=csv_parser, x_com=X_com)#passs tu z parserem
     else:
         print("Using default internal geometry.")
         x_points = [0.0, 0.05, 0.1, 1.1, 1.4]
@@ -214,7 +215,7 @@ def animate_realistic_aerodynamics(csv_file=None, X_com=0.7):
 
 
 if __name__ == "__main__":
-    FILE = "rocket_tube.csv"
-    CENTER_OF_MASS = 0.7  # "auto"
+    FILE = "dart_shape.csv"
+    CENTER_OF_MASS = "auto" #dla rocket_tube 0.7
 
     animate_realistic_aerodynamics(csv_file=FILE, X_com=CENTER_OF_MASS)

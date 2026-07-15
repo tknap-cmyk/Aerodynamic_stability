@@ -1,4 +1,13 @@
 import numpy as np
+from abc import ABC, abstractmethod
+
+class BaseAeroEngine(ABC):
+    def __init__(self, geometry):
+        self.geom = geometry
+
+    @abstractmethod
+    def get_instant_state(self, alpha_rad, Q_dyn, Cd):
+        pass
 
 
 class BarrowmanSolver:
@@ -66,7 +75,7 @@ class BarrowmanSolver:
         self.A_total = total_Area
         self.CP_high = weighted_Area_X / total_Area if total_Area != 0 else self.geom.x[-1] / 2
 
-    def get_instant_state(self, alpha_rad, Q_dyn, Cd):
+    def get_instant_state(self, alpha_rad, Q_dyn, Cd): #chat com
         # 1. Barrowman Aerodynamic Lift (low angles of attack)
         F_lift = Q_dyn * self.geom.A_ref * self.CN_low * np.sin(alpha_rad)
 
