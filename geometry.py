@@ -42,6 +42,20 @@ class CSVParser(BaseGeometryParser):
 
         return x_points, r_points
 
+#test dodawania nastepnych formatow
+class TXTParser(BaseGeometryParser):
+    def parse(self, filepath):
+        x_points, r_points = [], []
+
+        with open(filepath, 'r') as f:
+            for line in f:
+                parts = line.strip().split(',')
+                if len(parts) == 2:
+                    x_points.append(float(parts[0]))
+                    r_points.append(float(parts[1]))
+
+        return np.array(x_points), np.array(r_points)
+
 class GeometryHandler:
     def __init__(self, x_points, r_points, x_com="auto"):
         self.x = np.array(x_points, dtype=float)

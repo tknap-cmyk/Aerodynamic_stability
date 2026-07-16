@@ -6,30 +6,29 @@ import matplotlib.gridspec as gridspec
 from matplotlib.patches import Polygon
 from matplotlib.widgets import Slider, Button
 
-from solvers import BarrowmanSolver
-from geometry import GeometryHandler, CSVParser
+from geometry import GeometryHandler
+from config import get_parser, get_engine
 
-
-def animate_realistic_aerodynamics(csv_file=None, X_com=0.7):
+#nazwa on the nose ale szkoda zmieniac
+def animate_realistic_aerodynamics(csv_file=None, X_com=0.7, engine_choice="barrowman", parser_choice="csv"):
     ######GEOM SETUP#######
     if csv_file and os.path.exists(csv_file):
         print(f"Loading custom geometry from: {csv_file}")
-        csv_parser = CSVParser()
-        geom = GeometryHandler.from_file(csv_file, parser=csv_parser, x_com=X_com)#passs tu z parserem
+
+        current_parser = get_parser(parser_choice)
+
+        geom = GeometryHandler.from_file(csv_file, parser=current_parser, x_com=X_com)
+
     else:
         print("Using default internal geometry.")
         x_points = [0.0, 0.05, 0.1, 1.1, 1.4]
         r_points = [0.0, 0.0866, 0.1, 0.1, 0.15]
         geom = GeometryHandler(x_points, r_points, x_com=X_com)
 
-    ######PHYSICS SETUP######
-    physics = BarrowmanSolver(geometry=geom)
+    physics = get_engine(engine_choice, geometry=geom)
 
-    print(f"AERODYNAMICS und MASS")
+    print(f"Using Engine: {engine_choice.upper()}")
     print(f"Center of Mass (COM): {geom.x_com:.3f} m from nose tip")
-    print(f"Calculated CP_low:    {physics.CP_low:.3f} m from nose tip")
-    print(f"Calculated CP_high:   {physics.CP_high:.3f} m from nose tip")
-
     X_com = geom.x_com
 
     Q = 0.5 * 1.225 * 30.0 ** 2  # Dynamic Pressure
@@ -216,6 +215,13 @@ def animate_realistic_aerodynamics(csv_file=None, X_com=0.7):
 
 if __name__ == "__main__":
     FILE = "dart_shape.csv"
-    CENTER_OF_MASS = "auto" #dla rocket_tube 0.7
+    CENTER_OF_MASS = "auto"
+    """dla rocket_tube 0.7 dla innych auto"""
 
-    animate_realistic_aerodynamics(csv_file=FILE, X_com=CENTER_OF_MASS)
+    #set up line
+    animate_realistic_aerodynamics(
+        csv_file=FILE,
+        X_com=CENTER_OF_MASS,
+        engine_choice="barrowman",
+        parser_choice="csv"
+    )
